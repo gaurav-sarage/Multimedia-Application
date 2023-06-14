@@ -5,6 +5,26 @@ import { AudioPlayer } from './components/AudioPlayer';
 import { DocumentViewer } from './components/DocumentViewer';
 import { VideoPlayer } from './components/VideoPlayer';
 import { ImageViewer } from './components/ImageViewer';
+import { Pie, Bar, Chart } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    ArcElement,
+    Tooltip,
+    Legend
+} from 'chart.js';
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement
+);
 export default function App() {
 const [myFiles, setMyFiles] = useState([])
  const [selectedFile, setSelectedFile] = useState(null)
@@ -14,9 +34,85 @@ const [myFiles, setMyFiles] = useState([])
  useEffect(() => {
   setMyFiles(data)
  }, [])
- 
+ var barChartOptions = {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'top',
+        },
+        title: {
+            display: true,
+            text: 'Files Breakdown',
+        },
+    },
+ };
  return (
   <>
+    {showChartModal && (
+        <div style={styles.modal}>
+            <div style={styles.modalContent}>
+                <div style={styles.modalHeader}>
+                    <p style={{ fontWeight: "bold" }}>
+                        Files Breakdown
+                    </p>
+                    <button style={styles.closeButton} onClick={() => setShowChartModal(false)}>
+                        Close
+                    </button>
+                </div>
+                <div style={styles.modalBody}>
+                    <Pie 
+                        data={{
+                            labels: ['Video', 'Audio', 'Document', 'Image'],
+                            datasets: [
+                                {
+                                    label: 'Files Breakdown',
+                                    data: [myFiles.filter(file => file.type === 'video').length, myFiles.filter(file => file.type === 'audio').length, myFiles.filter(file => file.type === 'document').length, myFiles.filter(file => file.type === 'image').length],
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(54, 162, 235, 0.2)',
+                                            'rgba(255, 206, 86, 0.2)',
+                                            'rgba(75, 192, 192, 0.2)',
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(54, 162, 235, 1)',
+                                            'rgba(255, 206, 86, 1)',
+                                            'rgba(75, 192, 192, 1)'
+                                        ],
+                                        borderWidth: 1,
+                                },
+                            ],
+                        }}
+                    />
+                    <Bar
+                        data={{
+                            labels: ['Video', 'Audio', 'Document', 'Image'],
+                            datasets: [
+                                {
+                                    label: 'Files Breakdown',
+                                    data: [myFiles.filter(file => file.type === 'video').length, myFiles.filter(file => file.type === 'audio').length, myFiles.filter(file => file.type === 'document').length, myFiles.filter(file => file.type === 'image').length],
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(54, 162, 235, 0.2)',
+                                            'rgba(255, 206, 86, 0.2)',
+                                            'rgba(75, 192, 192, 0.2)',
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(54, 162, 235, 1)',
+                                            'rgba(255, 206, 86, 1)',
+                                            'rgba(75, 192, 192, 1)',
+                                        ],
+                                        borderWidth: 1,
+                                    },
+                                ],
+                            }}
+                        options={barChartOptions}
+                    />
+                </div>
+            </div>
+        </div>
+    )}
    <div className="App">
     <Header />
     <div style={styles.container}>
@@ -54,6 +150,17 @@ const [myFiles, setMyFiles] = useState([])
                 }
               }}
             >Download</button>
+            <button style={styles.controlButton}
+                onClick={() => {
+                    if (selectedFile) {
+                        const newFiles = myFiles.filter(file => file.id != selectedFile.id)
+                        setMyFiles(newFiles)
+                        setSelectedFile(null)
+                    }
+                }}
+                >
+                    Delete
+                </button>
           </div>
      <div style={styles.fileContainer}>
       <div style={{ width: "100%", padding: 10 }}>
