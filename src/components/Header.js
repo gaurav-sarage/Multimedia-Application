@@ -5,7 +5,7 @@ export const Header = () => {
                 G's Drive
             </h1>
             <p style={styles.headerSubText}>
-                A file manager created by Gaurav Sarage
+                A file manager created by gsierra19
             </p>
         </header>
     )
